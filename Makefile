@@ -7,7 +7,7 @@ all: iso
 include config/toolchain.mk
 
 run: raw
-	qemu-system-i386 -kernel $(BUILD_DIR)/kernel.bin
+	qemu-system-i386 -debugcon stdio -kernel $(BUILD_DIR)/kernel.bin
 
 run_iso: iso
 	qemu-system-i386 -cdrom $(BUILD_DIR)/os.iso
