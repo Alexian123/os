@@ -1,48 +1,33 @@
-ASM=nasm
-ASMFLAGS=-f elf32
+include config/config.mk
 
-BUILD_DIR=build
-ISO_DIR=$(BUILD_DIR)/isodir
-SRC_DIR=src
+.PHONY: all run always run_iso clean iso raw kernel libc
 
-MAIN_IMAGE=$(BUILD_DIR)/os.raw
-MAIN_ISO=$(BUILD_DIR)/os.iso
+all: iso
 
-SOURCES_ASM=$(wildcard $(SRC_DIR)/*.asm)
-OBJECTS_ASM=$(patsubst %.asm, $(BUILD_DIR)/asm/%.o, $(SOURCES_ASM))
+include config/toolchain.mk
 
-SOURCES_C=$(wildcard $(SRC_DIR)/*.c)
-OBJECTS_C=$(patsubst %.c, $(BUILD_DIR)/c/%.o, $(SOURCES_C))
+run: raw
+	qemu-system-i386 -kernel $(BUILD_DIR)/kernel.bin
 
-.PHONY: all run clean
+run_iso: iso
+	qemu-system-i386 -cdrom $(BUILD_DIR)/os.iso
 
-all: $(MAIN_ISO)
-
-run: all
-	qemu-system-i386 -kernel $(MAIN_IMAGE)
-
-run_cd: all
-	qemu-system-i386 -cdrom $(MAIN_ISO)
-
-$(MAIN_ISO): $(MAIN_IMAGE)
+iso: raw
 	mkdir -p $(ISO_DIR)/boot/grub
-	cp $(MAIN_IMAGE) $(ISO_DIR)/boot/os
-	cp grub.cfg $(ISO_DIR)/boot/grub/grub.cfg
-	grub-mkrescue -o $@ $(ISO_DIR)
+	cp $(BUILD_DIR)/kernel.bin $(ISO_DIR)/boot/os
+	cp $(CONFIG_DIR)/grub.cfg $(ISO_DIR)/boot/grub/grub.cfg
+	grub-mkrescue -o $(BUILD_DIR)/os.iso $(ISO_DIR)
+	@echo "--> Created  os.iso"
 
-$(MAIN_IMAGE): $(OBJECTS_ASM) $(OBJECTS_C)
-	./cross/bin/i686-elf-gcc -T linker.ld -o $@ -ffreestanding -O2 -nostdlib $^ -lgcc
+raw: kernel
 
-$(BUILD_DIR)/asm/%.o: %.asm
-	mkdir -p $(@D)
-	$(ASM) $(ASMFLAGS) -o $@ $<
-	echo "--> Done: " $<
+kernel: $(BUILD_DIR)/kernel.bin
+	@$(SCRIPTS_DIR)/check_multiboot.sh $<
 
-$(BUILD_DIR)/c/%.o: %.c
-	mkdir -p $(@D)
-	./cross/bin/i686-elf-gcc -c $< -o $@ -std=gnu99 -ffreestanding -O2 -Wall -Wextra
-	echo "--> Done: " $<
+$(BUILD_DIR)/kernel.bin:
+	$(MAKE) -C $(KERNEL_SRC_DIR)
 
 clean:
-	rm -rf $(BUILD_DIR)
+	$(MAKE) -C $(KERNEL_SRC_DIR) clean
 	rm -rf $(ISO_DIR)
+	rm -f $(BUILD_DIR)/os.iso

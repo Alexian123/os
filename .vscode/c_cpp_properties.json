@@ -3,10 +3,11 @@
         {
             "name": "GCC-Cross",
             "includePath": [
-                "${workspaceFolder}/cross/lib/gcc/i686-elf/15.2.0/include"
+                "${workspaceFolder}/src/**",
+                "${workspaceFolder}/toolchain/i686-elf/lib/gcc/i686-elf/11.2.0/include"
             ],
             "defines": [],
-            "compilerPath": "${workspaceFolder}/cross/bin/i686-elf-gcc",
+            "compilerPath": "${workspaceFolder}/toolchain/i686-elf/bin/i686-elf-gcc",
             "cStandard": "c99",
             "cppStandard": "c++14",
             "intelliSenseMode": "gcc-x86",
