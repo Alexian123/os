@@ -1,4 +1,4 @@
-TARGET_CFLAGS += -Wall -ffreestanding -nostdlib -I$(KERNEL_SRC_DIR)/include -I$(KERNEL_SRC_DIR)/include/libk
+TARGET_CFLAGS += -Wall -ffreestanding -nostdlib -I$(KERNEL_INCLUDE_DIR) -I$(LIBK_INCLUDE_DIR)
 TARGET_LIBS += -lgcc
 TARGET_LINKFLAGS += -T $(KERNEL_SRC_DIR)/arch/i686/linker.ld -nostdlib -ffreestanding -O2
 

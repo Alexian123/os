@@ -1,4 +1,4 @@
-#include <arch/i686/port_io.h>
+#include <kernel/port_io.h>
 
 #define PORT_E9 0xE9
 

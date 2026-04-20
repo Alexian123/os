@@ -29,6 +29,8 @@ export BUILD_DIR=$(PROJECT_ROOT_DIR)/build
 export ISO_DIR=$(BUILD_DIR)/isodir
 export SRC_DIR=$(PROJECT_ROOT_DIR)/src
 export KERNEL_SRC_DIR=$(SRC_DIR)/kernel
+export KERNEL_INCLUDE_DIR=$(KERNEL_SRC_DIR)/include
+export LIBK_INCLUDE_DIR=$(KERNEL_INCLUDE_DIR)/libk
 export LIBC_SRC_DIR=$(SRC_DIR)/libc
 
 # For make multithreaded make

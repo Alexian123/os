@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include <arch/i686/vga_io.h>
-#include <arch/i686/debug_e9.h>
+#include <kernel/vga_io.h>
+#include <kernel/debug_e9.h>
 
 int dputc(int c, int fd) {
     switch (fd) {
