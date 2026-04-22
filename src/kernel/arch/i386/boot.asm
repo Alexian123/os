@@ -64,6 +64,7 @@ _start:
 	; yet. The GDT should be loaded here. Paging should be enabled here.
 	; C++ features such as global constructors and exceptions will require
 	; runtime support to work as well.
+	cli	; sanity check
 	extern gdt_init
 	call gdt_init
 

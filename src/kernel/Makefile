@@ -1,6 +1,6 @@
 TARGET_CFLAGS += -Wall -ffreestanding -nostdlib -I$(KERNEL_INCLUDE_DIR) -I$(LIBK_INCLUDE_DIR)
 TARGET_LIBS += -lgcc
-TARGET_LINKFLAGS += -T $(KERNEL_SRC_DIR)/arch/i686/linker.ld -nostdlib -ffreestanding -O2
+TARGET_LINKFLAGS += -T $(KERNEL_SRC_DIR)/arch/i386/linker.ld -nostdlib -ffreestanding -O2
 
 HEADERS_C=$(shell find . -type f -name "*.h")
 SOURCES_C=$(shell find . -type f -name "*.c")

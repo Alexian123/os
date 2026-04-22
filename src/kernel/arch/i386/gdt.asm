@@ -1,4 +1,4 @@
-; void ASMCALL gdt_load(uint32_t gdt_desc_ptr);
+; void ASMCALL gdt_load(uint32_t gdt_desc_ptr)
 global gdt_load
 gdt_load:
     cli
