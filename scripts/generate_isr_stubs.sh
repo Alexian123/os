@@ -1,5 +1,7 @@
 #!/usr/bin/bash
 
+set -e
+
 if [ $# -lt 1 ]; then
     echo "Usage: ${1} [OUTPUT_FILE]"
     exit 1

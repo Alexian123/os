@@ -50,9 +50,10 @@ void idt_init(void) {
         idt_set_gate(i, 0, 0, 0);
     }
 
-    /* Enable CPU Exceptions */
+    /* Enable CPU Exceptions and IRQ's */
 #define X(n) idt_set_gate(n, (uint32_t)isr##n, 0x08, IDT_INT_GATE_PL0);
-    ISR_EXCEPTION_LIST
+    ISR_EXCEPTION_LIST \
+    IRQ_LIST
 #undef X
 
     idt_load((uint32_t)&idt_desc);

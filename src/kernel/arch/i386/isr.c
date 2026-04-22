@@ -1,12 +1,16 @@
 #include <kernel/isr.h>
 #include <kernel/asmcall.h>
+#include <kernel/pic_8259.h>
 #include <stdio.h>
 #include <stddef.h>
 
-#define ISR_COUNT 256
-#define EXCEPTION_COUNT 32
+#define ISR_COUNT           256
+#define EXCEPTION_COUNT     32
 
-static const char* const exceptions[EXCEPTION_COUNT] = {
+#define IRQ_START_INDEX     PIC_REMAP_OFFSET
+#define IRQ_END_INDEX       PIC_REMAP_OFFSET + 16
+
+static const char *const exceptions[EXCEPTION_COUNT] = {
     "Divide by zero error",
     "Debug",
     "Non-maskable Interrupt",
@@ -51,8 +55,13 @@ void isr_register_handler(uint8_t n, isr_handler_t handler) {
 void ASMCALL isr_handler_common(registers_t* regs) {
     if (handlers[regs->int_no] != NULL) {
         handlers[regs->int_no](regs);
+        
+        // check if it is an IRQ
+        if (regs->int_no >= IRQ_START_INDEX && regs->int_no <= IRQ_END_INDEX) {
+            get_pic_driver()->send_eoi(regs->int_no - IRQ_START_INDEX);
+        }
     } else if (regs->int_no < EXCEPTION_COUNT) {
-        printf("Unhandled exception: %s (0x%x)\n", exceptions[regs->int_no], regs->int_no);
+        printf("Unhandled exception: %s (0x%x), code %d\n", exceptions[regs->int_no], regs->int_no, regs->err_code);
         hlt();
     } else {
         printf("Interrupt 0x%x not handled!\n", regs->int_no);

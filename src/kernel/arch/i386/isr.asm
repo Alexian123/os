@@ -43,7 +43,7 @@ isr_common:
     mov fs, ax
     mov gs, ax
 
-    popa
+    POPA
 
     add esp, 8      ; pop int_no + err_code
 
