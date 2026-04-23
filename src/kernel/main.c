@@ -8,6 +8,7 @@
 #include <kernel/tty.h>
 
 #include <stdio.h>
+#include <string.h>
 
 void kernel_main(void) {
 	idt_init();
@@ -20,6 +21,7 @@ void kernel_main(void) {
 
 	// init input event queue
 	input_queue_init();
+	debug_printf("[DEBUG] Input event queue initialized.\n");
 
 	// init keyboard
 	const keyboard_driver_t *kbd = get_keyboard_driver();
@@ -27,16 +29,13 @@ void kernel_main(void) {
 	debug_printf("[DEBUG] %s driver initialized.\n", kbd->name);
 
 	// Enable IRQ's
-	pic_driver->unmask(1);
 	sti();
 
-	vga_clearscreen();
-	//printf("Hello, Kernel!\n");
-
+	// init TTY
 	tty_init();
+	debug_printf("[DEBUG] TTY initialized.\n");
 
-	tty_write("Hello, Kernel!\n");
-
+	tty_write("Hello, Kernel!\n> ");
 	for (;;) {
 		tty_update();
 

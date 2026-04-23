@@ -15,6 +15,7 @@ static bool line_ready = false;
 void tty_init(void) {
     line_len = 0;
     line_ready = false;
+    vga_clearscreen();
 }
 
 void tty_update(void) {

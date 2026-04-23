@@ -1,10 +1,11 @@
 #include <kernel/keyboard_driver.h>
 #include <kernel/ps2_controller.h>
 #include <kernel/isr.h>
+#include <kernel/pic_8259.h>
 #include <kernel/input_event_queue.h>
 #include <kernel/keycodes.h>
 
-#define KBD_IRQ 33
+#define KBD_IRQ 1
 
 static const ps2_controller_driver_t *ps2;
 
@@ -134,8 +135,8 @@ static void keyboard_irq(registers_t *r) {
 static void keyboard_init(void) {
     ps2 = get_ps2_controller();
     ps2->init();
-
-    isr_register_handler(KBD_IRQ, keyboard_irq);
+    isr_register_handler(KBD_IRQ + PIC_REMAP_OFFSET, keyboard_irq);
+    get_pic_driver()->unmask(KBD_IRQ);
 }
 
 /* --- Driver struct --- */
