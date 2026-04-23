@@ -1,3 +1,5 @@
+#include <kernel/port_io.h>
+
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -77,21 +79,59 @@ void vga_scroll_down(void) {
     }
 }
 
-void vga_putchar(char c)  {
-	if (c == '\n') {
-        screen_column = 0;
-		vga_scroll_down();
+void vga_backspace(void) {
+    if (screen_column == 0 && screen_row == 0)
         return;
+
+    if (screen_column == 0) {
+        screen_row--;
+        screen_column = VGA_WIDTH - 1;
+    } else {
+        screen_column--;
     }
-	if (c == '\r') {
+}
+
+static inline void vga_move_hw_cursor(size_t x, size_t y) {
+    uint16_t pos = (uint16_t)(y * VGA_WIDTH + x);
+
+    outb(0x3D4, 0x0F);
+    outb(0x3D5, (uint8_t)(pos & 0xFF));
+
+    outb(0x3D4, 0x0E);
+    outb(0x3D5, (uint8_t)((pos >> 8) & 0xFF));
+}
+
+void vga_putchar(char c)  {
+
+	switch (c) {
+	case '\n':
 		screen_column = 0;
-		return;
-	}
-	vga_putentryat(c, screen_color, screen_column, screen_row);
-	if (++screen_column == VGA_WIDTH) {
+		vga_scroll_down();
+		break;
+
+	case '\r':
 		screen_column = 0;
-		if (++screen_row == VGA_HEIGHT) {
-			screen_row = 0;
+		break;
+
+	case '\t': // replace tab with 4 spaces
+		for (int i = 0; i < 4; ++i)
+			vga_putchar(' ');
+		break;
+
+	case '\b':
+		vga_backspace();
+		break;
+
+	default:
+		vga_putentryat(c, screen_color, screen_column, screen_row);
+		if (++screen_column == VGA_WIDTH) {
+			screen_column = 0;
+			if (++screen_row == VGA_HEIGHT) {
+				screen_row = 0;
+			}
 		}
+		break;
 	}
+
+	vga_move_hw_cursor(screen_column, screen_row);
 }

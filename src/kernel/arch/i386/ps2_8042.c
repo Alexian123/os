@@ -29,10 +29,6 @@ static bool wait_output_full(void) {
     return false;
 }
 
-static bool ps2_probe(void) {
-    return true; // basic for now
-}
-
 static void ps2_write(uint8_t data) {
     wait_input_clear();
     outb(PS2_DATA_PORT, data);
@@ -68,7 +64,6 @@ static void ps2_init(void) {
 
 static const ps2_controller_driver_t driver = {
     .name = "8042 PS/2 Controller",
-    .probe = ps2_probe,
     .init = ps2_init,
     .read = ps2_read,
     .write = ps2_write,

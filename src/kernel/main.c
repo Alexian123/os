@@ -5,6 +5,8 @@
 #include <kernel/isr.h>
 #include <kernel/keyboard_driver.h>
 #include <kernel/input_event_queue.h>
+#include <kernel/tty.h>
+
 #include <stdio.h>
 
 void kernel_main(void) {
@@ -31,19 +33,19 @@ void kernel_main(void) {
 	vga_clearscreen();
 	//printf("Hello, Kernel!\n");
 
-	for (;;) {
-		input_event_t ev;
-		if (input_queue_pop_event(&ev)) {
-			switch (ev.type) {
-				case INPUT_EVENT_KEY:
-					if (ev.key.pressed && ev.key.ascii) {
-						putchar(ev.key.ascii);
-					}
-					break;
+	tty_init();
 
-				default:
-					break;
-			}
+	tty_write("Hello, Kernel!\n");
+
+	for (;;) {
+		tty_update();
+
+		if (tty_line_available()) {
+			const char *line = tty_get_line();
+
+			tty_write("You typed: ");
+			tty_write(line);
+			tty_write("\n> ");
 		}
 
 		hlt();

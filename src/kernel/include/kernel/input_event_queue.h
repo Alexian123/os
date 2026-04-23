@@ -19,8 +19,8 @@ typedef struct input_event
     {
         struct 
         {
+            int keycode;
             uint8_t scancode;
-            char ascii;
             bool pressed;
         } key;
 

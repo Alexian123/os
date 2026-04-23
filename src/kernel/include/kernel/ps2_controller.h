@@ -8,8 +8,6 @@ typedef struct ps2_controller_driver
 {
     const char *name;
 
-    bool (*probe)(void);
-
     void (*init)(void);
 
     bool (*read)(uint8_t *data);
