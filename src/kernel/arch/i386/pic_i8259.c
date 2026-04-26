@@ -54,6 +54,7 @@ enum pic_cmd
 };
 
 static uint16_t pic_mask = 0xFFFF;
+static bool pic_auto_eoi = false;
 
 static uint16_t pic_get_mask() {
     return (uint16_t)inb(PIC1_DATA_PORT) | (((uint16_t)inb(PIC2_DATA_PORT)) << 8);
@@ -89,6 +90,7 @@ static void pic_remap(uint8_t offset_pic1, uint8_t offset_pic2, bool auto_eoi) {
     // send ICW4
     uint8_t icw4 = PIC_ICW4_8086;
     if (auto_eoi) {
+        pic_auto_eoi = true;
         icw4 |= PIC_ICW4_AUTO_EOI;
     }
     outb(PIC1_DATA_PORT, icw4);
@@ -98,6 +100,10 @@ static void pic_remap(uint8_t offset_pic1, uint8_t offset_pic2, bool auto_eoi) {
 
     // mask all
     pic_set_mask(0xFFFF);
+}
+
+static bool pic_is_auto_eoi(void) {
+    return pic_auto_eoi;
 }
 
 static void pic_mask_irq(int irq) {
@@ -119,34 +125,35 @@ static void pic_send_eoi(int irq) {
     outb(PIC1_CMD_PORT, PIC_CMD_EOI);
 }
 
-static uint16_t pic_read_irr() {
+static uint16_t pic_read_irr(void) {
     outb(PIC1_CMD_PORT, PIC_CMD_READ_IRR);
     outb(PIC2_CMD_PORT, PIC_CMD_READ_IRR);
     return (((uint16_t)inb(PIC2_CMD_PORT)) << 8) | ((uint16_t)inb(PIC1_CMD_PORT));
 }
 
-static uint16_t pic_read_isr() {
+static uint16_t pic_read_isr(void) {
     outb(PIC1_CMD_PORT, PIC_CMD_READ_ISR);
     outb(PIC2_CMD_PORT, PIC_CMD_READ_ISR);
     return (((uint16_t)inb(PIC2_CMD_PORT)) << 8) | ((uint16_t)inb(PIC1_CMD_PORT));
 }
 
-static bool pic_probe() {
+static bool pic_probe(void) {
     pic_disable();
     pic_set_mask(0x1337);
     return pic_get_mask() == 0x1337;
 }
 
 static const pic_driver_t driver = {
-    .name = "8259 PIC",
+    .name = "i8259 PIC",
     .probe = &pic_probe,
     .remap = &pic_remap,
+    .is_auto_eoi = &pic_is_auto_eoi,
     .disable = &pic_disable,
     .send_eoi = &pic_send_eoi,
     .mask = &pic_mask_irq,
     .unmask = &pic_unmask_irq
 };
 
-const pic_driver_t *get_pic_driver() {
+const pic_driver_t *get_pic_i8258_driver(void) {
     return &driver;
 }

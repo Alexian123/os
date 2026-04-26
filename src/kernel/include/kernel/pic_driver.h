@@ -4,15 +4,20 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#define PIC_REMAP_OFFSET 32
+
 typedef struct pic_driver
 {
     const char *name;
-    bool (*probe)();
+    bool (*probe)(void);
     void (*remap)(uint8_t offset_pic1, uint8_t offset_pic2, bool auto_eoi);
-    void (*disable)();
+    bool (*is_auto_eoi)(void);
+    void (*disable)(void);
     void (*send_eoi)(int irq);
     void (*mask)(int irq);
     void (*unmask)(int irq);
 } pic_driver_t;
+
+const pic_driver_t *get_pic_i8258_driver(void);
 
 #endif

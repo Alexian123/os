@@ -1,6 +1,6 @@
 #include <kernel/isr.h>
 #include <kernel/asmcall.h>
-#include <kernel/pic_8259.h>
+#include <kernel/pic_driver.h>
 #include <stdio.h>
 #include <stddef.h>
 
@@ -54,11 +54,16 @@ void isr_register_handler(uint8_t n, isr_handler_t handler) {
 /* Main dispatcher called from assembly */
 void ASMCALL isr_handler_common(registers_t* regs) {
     if (handlers[regs->int_no] != NULL) {
+        // call registered handler
         handlers[regs->int_no](regs);
         
         // check if it is an IRQ
         if (regs->int_no >= IRQ_START_INDEX && regs->int_no <= IRQ_END_INDEX) {
-            get_pic_driver()->send_eoi(regs->int_no - IRQ_START_INDEX);
+            // send End Of Interrupt if not auto
+            pic_driver_t *pic_drv = get_pic_i8258_driver();
+            if (!pic_drv->is_auto_eoi()) {
+                get_pic_i8258_driver()->send_eoi(regs->int_no - IRQ_START_INDEX);
+            }
         }
     } else if (regs->int_no < EXCEPTION_COUNT) {
         printf("Unhandled exception: %s (0x%x), code %d\n", exceptions[regs->int_no], regs->int_no, regs->err_code);

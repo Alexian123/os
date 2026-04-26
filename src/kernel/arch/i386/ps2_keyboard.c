@@ -1,7 +1,7 @@
 #include <kernel/keyboard_driver.h>
 #include <kernel/ps2_controller.h>
 #include <kernel/isr.h>
-#include <kernel/pic_8259.h>
+#include <kernel/pic_driver.h>
 #include <kernel/input_event_queue.h>
 #include <kernel/keycodes.h>
 
@@ -136,7 +136,7 @@ static void keyboard_init(void) {
     ps2 = get_ps2_controller();
     ps2->init();
     isr_register_handler(KBD_IRQ + PIC_REMAP_OFFSET, keyboard_irq);
-    get_pic_driver()->unmask(KBD_IRQ);
+    get_pic_i8258_driver()->unmask(KBD_IRQ);
 }
 
 /* --- Driver struct --- */
