@@ -32,7 +32,7 @@ static uint16_t pit_read_reload_value(pit_channel_t channel) {
         break;
 
     default:
-        return;
+        return 0;
     } 
 
     // Disable interrupts

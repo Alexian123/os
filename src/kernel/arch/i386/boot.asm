@@ -56,6 +56,10 @@ _start:
 	; in assembly as languages such as C cannot function without a stack.
 	mov esp, stack_top
 
+	; push multiboot params for kernel_main
+	push eax	; unsigned int magic
+	push ebx	; multiboot_info_t *mbd
+
 	; This is a good place to initialize crucial processor state before the
 	; high-level kernel is entered. It's best to minimize the early
 	; environment where crucial features are offline. Note that the
@@ -75,6 +79,7 @@ _start:
 	; stack since (pushed 0 bytes so far) and the alignment is thus
 	; preserved and the call is well defined.
         ; note, that if you are building on Windows, C functions may have "_" prefix in assembly: _kernel_main
+	; void kernel_main(multiboot_info_t *mbd, unsigned int magic)
 	extern kernel_main
 	call kernel_main
 

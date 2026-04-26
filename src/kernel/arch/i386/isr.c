@@ -60,9 +60,9 @@ void ASMCALL isr_handler_common(registers_t* regs) {
         // check if it is an IRQ
         if (regs->int_no >= IRQ_START_INDEX && regs->int_no <= IRQ_END_INDEX) {
             // send End Of Interrupt if not auto
-            pic_driver_t *pic_drv = get_pic_i8258_driver();
+            const pic_driver_t *pic_drv = get_pic_i8258_driver();
             if (!pic_drv->is_auto_eoi()) {
-                get_pic_i8258_driver()->send_eoi(regs->int_no - IRQ_START_INDEX);
+                pic_drv->send_eoi(regs->int_no - IRQ_START_INDEX);
             }
         }
     } else if (regs->int_no < EXCEPTION_COUNT) {
