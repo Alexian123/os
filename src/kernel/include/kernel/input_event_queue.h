@@ -1,5 +1,5 @@
 #ifndef __INPUT_EVENT_QUEUE_H
-#define __INPUT_EVENT_QUEUE_H
+#define __INPUT_EVENT_QUEUE_H 1
 
 #include <stdint.h>
 #include <stdbool.h>

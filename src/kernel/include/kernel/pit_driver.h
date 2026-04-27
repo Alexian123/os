@@ -1,5 +1,5 @@
 #ifndef __PIT_DRIVER_H
-#define __PIT_DRIVER_H
+#define __PIT_DRIVER_H 1
 
 #include <stdint.h>
 

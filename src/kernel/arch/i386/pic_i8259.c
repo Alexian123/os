@@ -151,7 +151,9 @@ static const pic_driver_t driver = {
     .disable = &pic_disable,
     .send_eoi = &pic_send_eoi,
     .mask = &pic_mask_irq,
-    .unmask = &pic_unmask_irq
+    .unmask = &pic_unmask_irq,
+    .read_irr = &pic_read_irr,
+    .read_isr = &pic_read_isr
 };
 
 const pic_driver_t *get_pic_i8258_driver(void) {

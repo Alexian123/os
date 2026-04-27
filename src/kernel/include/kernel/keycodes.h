@@ -1,5 +1,5 @@
 #ifndef __KEYCODES_H
-#define __KEYCODES_H
+#define __KEYCODES_H 1
 
 typedef enum keycode
 {

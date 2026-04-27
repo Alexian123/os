@@ -80,7 +80,7 @@ static void gdt_set_gate(int i, uint32_t base, uint32_t limit,
     gdt[i].access      = access;
 }
 
-void ASMCALL gdt_init(void) {
+void gdt_init(void) {
     gdt_desc.limit = sizeof(gdt) - 1;
     gdt_desc.base  = (uint32_t)&gdt;
 

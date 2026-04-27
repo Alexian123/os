@@ -64,12 +64,12 @@ static void ps2_init(void) {
 
 static const ps2_controller_driver_t driver = {
     .name = "8042 PS/2 Controller",
-    .init = ps2_init,
-    .read = ps2_read,
-    .write = ps2_write,
-    .read_status = ps2_read_status,
-    .enable_port1 = ps2_enable_port1,
-    .disable_port1 = ps2_disable_port1
+    .init = &ps2_init,
+    .read = &ps2_read,
+    .write = &ps2_write,
+    .read_status = &ps2_read_status,
+    .enable_port1 = &ps2_enable_port1,
+    .disable_port1 = &ps2_disable_port1
 };
 
 const ps2_controller_driver_t *get_ps2_controller(void) {

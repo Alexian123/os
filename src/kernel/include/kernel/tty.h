@@ -1,5 +1,5 @@
 #ifndef __TTY_H
-#define __TTY_H
+#define __TTY_H 1
 
 #include <stdbool.h>
 

@@ -142,7 +142,7 @@ static void keyboard_init(void) {
 /* --- Driver struct --- */
 static const keyboard_driver_t driver = {
     .name = "PS/2 Keyboard",
-    .init = keyboard_init
+    .init = &keyboard_init
 };
 
 const keyboard_driver_t *get_keyboard_driver(void) {

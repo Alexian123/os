@@ -1,5 +1,5 @@
 #ifndef __KEYBOARD_DRIVER_H
-#define __KEYBOARD_DRIVER_H
+#define __KEYBOARD_DRIVER_H 1
 
 #include <stdint.h>
 #include <stdbool.h>

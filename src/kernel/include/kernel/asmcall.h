@@ -1,5 +1,5 @@
 #ifndef __ASM_H
-#define __ASM_H
+#define __ASM_H 1
 
 #define ASMCALL __attribute__((cdecl))
 

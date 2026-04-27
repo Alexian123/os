@@ -5,10 +5,12 @@
 #include <kernel/hal.h>
 #include <kernel/util.h>
 
+#include <stdint.h>
 #include <stdio.h>
 
+extern uint32_t initial_page_dir[];
 
-void kernel_main(multiboot_info_t *mbd, unsigned int magic) {
+void ASMCALL kernel_main(multiboot_info_t *mbd, unsigned int magic) {
 	// init hardware abstraction layer
 	hal_init();
 
@@ -16,7 +18,7 @@ void kernel_main(multiboot_info_t *mbd, unsigned int magic) {
     if (magic != MULTIBOOT_BOOTLOADER_MAGIC) {
         panic("invalid magic number!");
     }
-
+	
 	/* Check bit 6 to see if we have a valid memory map */
     if (!(mbd->flags >> 6 & 0x1)) {
         panic("invalid memory map given by GRUB bootloader");
@@ -37,6 +39,10 @@ void kernel_main(multiboot_info_t *mbd, unsigned int magic) {
         }
     }
 
+	/* Unmap identity mapped memory */
+	initial_page_dir[0] = 0;	// clear first entry (0MB - 4MB)
+	flush_tlb();
+
 	// for (;;) {
 	// 	for (int i = 0; i < 5; ++i) {
 	// 		system_timer_sleep(1000);
@@ -45,6 +51,7 @@ void kernel_main(multiboot_info_t *mbd, unsigned int magic) {
 	// 	printf(" 5 seconds passed. \n");
 	// }
 
+	/* Shell */
 	tty_write("Hello, Kernel!\n> ");
 	for (;;) {	// this loop should never end
 		tty_update();

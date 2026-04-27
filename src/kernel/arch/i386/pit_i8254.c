@@ -84,9 +84,9 @@ static void pit_configure(uint8_t cmd_flags) {
 
 static const pit_driver_t driver = {
     .name = "i8254 PIT",
-    .read_reload_value = pit_read_reload_value,
-    .set_reload_value = pit_set_reload_valuet,
-    .configure = pit_configure
+    .read_reload_value = &pit_read_reload_value,
+    .set_reload_value = &pit_set_reload_valuet,
+    .configure = &pit_configure
 };
 
 const pit_driver_t *get_pit_i8254_driver() {

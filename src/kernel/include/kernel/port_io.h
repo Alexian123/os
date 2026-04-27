@@ -1,5 +1,5 @@
 #ifndef __PORT_IO_H
-#define __PORT_IO_H
+#define __PORT_IO_H 1
 
 #include <stdint.h>
 #include <kernel/asmcall.h>

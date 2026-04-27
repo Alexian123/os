@@ -1,5 +1,5 @@
 #ifndef __PIC_DRIVER_H
-#define __PIC_DRIVER_H
+#define __PIC_DRIVER_H 1
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -16,6 +16,8 @@ typedef struct pic_driver
     void (*send_eoi)(int irq);
     void (*mask)(int irq);
     void (*unmask)(int irq);
+    uint16_t (*read_irr)(void);
+    uint16_t (*read_isr)(void);
 } pic_driver_t;
 
 const pic_driver_t *get_pic_i8258_driver(void);

@@ -69,6 +69,8 @@ void ASMCALL isr_handler_common(registers_t* regs) {
         printf("Unhandled exception: %s (0x%x), code %d\n", exceptions[regs->int_no], regs->int_no, regs->err_code);
         hlt();
     } else {
-        printf("Interrupt 0x%x not handled!\n", regs->int_no);
+        const pic_driver_t *pic_drv = get_pic_i8258_driver();
+        printf("Interrupt 0x%x not handled!\nIRR=0x%x, ISR=0x%x\n", 
+            regs->int_no, pic_drv->read_irr(), pic_drv->read_isr());
     }
 }

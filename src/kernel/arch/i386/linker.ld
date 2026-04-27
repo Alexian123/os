@@ -1,52 +1,42 @@
-/* The bootloader will look at this image and start execution at the symbol
-   designated as the entry point. */
 ENTRY(_start)
 
-/* Tell where the various sections of the object files will be put in the final
-   kernel image. */
 SECTIONS
 {
-	/* It used to be universally recommended to use 1M as a start offset,
-	   as it was effectively guaranteed to be available under BIOS systems.
-	   However, UEFI has made things more complicated, and experimental data
-	   strongly suggests that 2M is a safer place to load. In 2016, a new
-	   feature was introduced to the multiboot2 spec to inform bootloaders
-	   that a kernel can be loaded anywhere within a range of addresses and
-	   will be able to relocate itself to run from such a loader-selected
-	   address, in order to give the loader freedom in selecting a span of
-	   memory which is verified to be available by the firmware, in order to
-	   work around this issue. This does not use that feature, so 2M was
-	   chosen as a safer option than the traditional 1M. */
-	. = 2M;
+    /* Start at physical 1MB */
+    . = 0x00100000;
 
-	/* First put the multiboot header, as it is required to be put very early
-	   in the image or the bootloader won't recognize the file format.
-	   Next we'll put the .text section. */
-	.text BLOCK(4K) : ALIGN(4K)
-	{
-		*(.multiboot)
-		*(.text)
-	}
+    /* Sections needed before paging is on (Physical) */
+    .multiboot ALIGN(4K) : { *(.multiboot) }
+	.note.gnu.build-id ALIGN(4K): { *(.note.gnu.build-id) }
+    .boot      ALIGN(4K) : { *(.boot)      }
 
-	/* Read-only data. */
-	.rodata BLOCK(4K) : ALIGN(4K)
-	{
-		*(.rodata)
-	}
+    /* Define the Virtual Offset */
+    _kernel_virtual_base = 0xC0000000;
+    
+    /* Set the location counter to the Higher Half */
+    /* This moves the VMA to 3GB + 1MB, but keeps LMA at 1MB */
+    . = . + _kernel_virtual_base;
 
-	/* Read-write data (initialized) */
-	.data BLOCK(4K) : ALIGN(4K)
-	{
-		*(.data)
-	}
+    .text ALIGN(4K) : AT(ADDR(.text) - _kernel_virtual_base)
+    {
+        *(.text)
+    }
 
-	/* Read-write data (uninitialized) and stack */
-	.bss BLOCK(4K) : ALIGN(4K)
-	{
-		*(COMMON)
-		*(.bss)
-	}
+    .rodata ALIGN(4K) : AT(ADDR(.rodata) - _kernel_virtual_base)
+    {
+        *(.rodata)
+    }
 
-	/* The compiler may produce other sections, by default it will put them in
-	   a segment with the same name. Simply add stuff here as needed. */
+    .data ALIGN(4K) : AT(ADDR(.data) - _kernel_virtual_base)
+    {
+        *(.data)
+    }
+
+    .bss ALIGN(4K) : AT(ADDR(.bss) - _kernel_virtual_base)
+    {
+        *(COMMON)
+        *(.bss)
+    }
+
+    _kernel_end = .;
 }

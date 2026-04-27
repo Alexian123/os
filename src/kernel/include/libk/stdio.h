@@ -1,5 +1,5 @@
 #ifndef __STDIO_H
-#define __STDIO_H
+#define __STDIO_H 1
 
 #include <stdarg.h>
 

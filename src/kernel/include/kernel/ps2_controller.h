@@ -1,5 +1,5 @@
 #ifndef __PS2_CONTROLLER_H
-#define __PS2_CONTROLLER_H
+#define __PS2_CONTROLLER_H 1
 
 #include <stdint.h>
 

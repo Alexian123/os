@@ -1,5 +1,5 @@
 #ifndef __SYSTEM_TIMER_H
-#define __SYSTEM_TIMER_H
+#define __SYSTEM_TIMER_H 1
 
 #include <kernel/pit_driver.h>
 
