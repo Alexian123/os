@@ -1,6 +1,6 @@
 include config/config.mk
 
-.PHONY: all run always run_iso clean iso raw kernel libc
+.PHONY: all run debug always run_iso clean iso raw kernel libc
 
 all: iso
 
@@ -11,6 +11,9 @@ run: raw
 
 run_iso: iso
 	qemu-system-i386 -cdrom $(BUILD_DIR)/os.iso
+
+debug: iso
+	bochs -f $(CONFIG_DIR)/bochs.cfg
 
 iso: raw
 	mkdir -p $(ISO_DIR)/boot/grub

@@ -15,6 +15,10 @@
 - qemu-system-x86
 - grub2
 - xorriso
+- bochs
+- bochs-x
+- bochsbios
+- bochs-term
 
 ## Build & Run Instructions
 
