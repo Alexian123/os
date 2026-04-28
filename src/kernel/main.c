@@ -5,25 +5,15 @@
 #include <kernel/arch/i386/hal.h>
 #include <kernel/arch/i386/x86_utils.h>
 #include <kernel/core/utils.h>
+#include <kernel/mem/pmm.h>
 
 #include <stdint.h>
 #include <stddef.h>
 #include <stdio.h>
 
-#define KERNEL_VIRTUAL_BASE 0xC0000000
-
 #define SANITY_CHECKS 1
 
-uintptr_t free_memory_start;
-size_t total_ram;
-
 void ASMCALL kernel_main(multiboot_info_t *mbd, unsigned int magic) {
-	// determine kernel physical range
-	extern char _kernel_start[]; 
-    extern char _kernel_end[];
-	uintptr_t k_start = (uintptr_t)_kernel_start - KERNEL_VIRTUAL_BASE;
-    uintptr_t k_end = (uintptr_t)_kernel_end - KERNEL_VIRTUAL_BASE;
-
 #ifdef SANITY_CHECKS
 	// make sure the magic number matches for memory mapping
     if (magic != MULTIBOOT_BOOTLOADER_MAGIC) {
@@ -36,30 +26,80 @@ void ASMCALL kernel_main(multiboot_info_t *mbd, unsigned int magic) {
     }
 #endif
 
-	// parse memory map
-	multiboot_memory_map_t* mmap = (multiboot_memory_map_t*)mbd->mmap_addr;
-    uint32_t mmap_entries = mbd->mmap_length / sizeof(multiboot_memory_map_t);
-	for (uint32_t i = 0; i < mmap_entries; ++i) {
-        if (mmap[i].type == MULTIBOOT_MEMORY_AVAILABLE) {
-            // Find the highest available address to determine total RAM
-			uint64_t addr = ((uint64_t)mmap[i].addr_high << 32) | (uint64_t)mmap[i].addr_low;
-        	uint64_t len  = ((uint64_t)mmap[i].len_high << 32) | (uint64_t)mmap[i].len_low;
-            uint64_t entry_end = addr + len;
-            if (entry_end > total_ram) total_ram = (size_t)entry_end;
+	// determine kernel physical range
+	extern char _kernel_start[]; 
+    extern char _kernel_end[];
+	uintptr_t k_start = (uintptr_t)_kernel_start - KERNEL_VIRTUAL_BASE;
+    uintptr_t k_end = (uintptr_t)_kernel_end - KERNEL_VIRTUAL_BASE;
+
+	// determine total ram
+	size_t total_ram = 0;
+    uint32_t offset = 0;
+    while (offset < mbd->mmap_length) {
+        multiboot_memory_map_t* m = (multiboot_memory_map_t*)(mbd->mmap_addr + offset);
+        uint64_t addr = ((uint64_t)m->addr_high << 32) | m->addr_low;
+        uint64_t len  = ((uint64_t)m->len_high  << 32) | m->len_low;
+
+		// If the START of the region is above 4GB, skip it entirely
+		if (addr >= 0xFFFFFFFF) {
+			continue;
+		}
+
+		// If the region STARTS below 4GB but ENDS above it, truncate it
+		if (addr + len > 0xFFFFFFFF) {
+			len = 0xFFFFFFFF - addr;
+		}
+
+        uint64_t end = addr + len;
+        if (end > total_ram) {
+            total_ram = (size_t)end;
         }
+        offset += m->size + sizeof(m->size);
     }
 
-	// init PMM Bitmap
-    //pmm_init(k_end, total_ram);	 // place the bitmap immediately after the kernel in memory
+	// init PMM (place bitmap right after kernel)
+    pmm_init(k_end, total_ram);
 
-    // 4. Mark reserved areas in Bitmap
-    // Loop through mmap again: if type != AVAILABLE, pmm_lock_region(addr, len)
-    // ALSO: pmm_lock_region(k_start, k_end - k_start); // Protect the kernel!
+    // mark memory regions
+    offset = 0;
+    while (offset < mbd->mmap_length) {
+        multiboot_memory_map_t* m = (multiboot_memory_map_t*)(mbd->mmap_addr + offset);
+        uint64_t addr = ((uint64_t)m->addr_high << 32) | m->addr_low;
+        uint64_t len  = ((uint64_t)m->len_high  << 32) | m->len_low;
+
+		// If the START of the region is above 4GB, skip it entirely
+		if (addr >= 0xFFFFFFFF) {
+			continue;
+		}
+
+		// If the region STARTS below 4GB but ENDS above it, truncate it
+		if (addr + len > 0xFFFFFFFF) {
+			len = 0xFFFFFFFF - addr;
+		}
+
+        if (m->type == MULTIBOOT_MEMORY_AVAILABLE) {
+            pmm_free_region((uintptr_t)addr, (size_t)len);
+        } else {
+            pmm_lock_region((uintptr_t)addr, (size_t)len);
+        }
+        offset += m->size + sizeof(m->size);
+    }
+
+	// reserve kernel region
+    pmm_lock_region(k_start, k_end - k_start);
+
+    // reserve bitmap region
+    size_t total_frames = total_ram / PAGE_SIZE;
+    size_t bitmap_bytes = (total_frames + 7) / 8;
+    pmm_lock_region(k_end, bitmap_bytes);
+
+    // reserve low memory
+    pmm_lock_region(0x0, 0x100000);
 
 	// init hardware abstraction layer
 	hal_init();
 
-	/* Unmap identity mapped memory */
+	// remove identity mapping
 	extern uint32_t initial_page_dir[];
 	initial_page_dir[0] = 0;	// clear first entry (0MB - 4MB)
 	flush_tlb();
