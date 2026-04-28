@@ -1,4 +1,4 @@
-#include <kernel/keycodes.h>
+#include <kernel/core/keycodes.h>
 #include <stdbool.h>
 
 typedef struct keyboard_mods

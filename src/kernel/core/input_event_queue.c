@@ -1,4 +1,4 @@
-#include <kernel/input_event_queue.h>
+#include <kernel/core/input_event_queue.h>
 
 #define INPUT_QUEUE_SIZE 128
 

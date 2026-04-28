@@ -1,5 +1,5 @@
-#include <kernel/pic_driver.h>
-#include <kernel/port_io.h>
+#include <kernel/drivers/pic_driver.h>
+#include <kernel/arch/i386/port_io.h>
 
 #include <stdbool.h>
 

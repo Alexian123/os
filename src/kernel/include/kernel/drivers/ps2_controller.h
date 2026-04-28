@@ -2,8 +2,8 @@
 #define __PS2_CONTROLLER_H 1
 
 #include <stdint.h>
-
 #include <stdbool.h>
+
 typedef struct ps2_controller_driver
 {
     const char *name;

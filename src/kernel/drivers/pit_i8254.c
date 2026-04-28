@@ -1,8 +1,8 @@
-#include <kernel/pit_driver.h>
-#include <kernel/port_io.h>
-#include <kernel/asmcall.h>
-#include <kernel/isr.h>
-#include <kernel/pic_driver.h>
+#include <kernel/drivers/pit_driver.h>
+#include <kernel/arch/i386/port_io.h>
+#include <kernel/arch/i386/asmcall.h>
+#include <kernel/arch/i386/isr.h>
+#include <kernel/drivers/pic_driver.h>
 
 #define PIT_IRQ 0
 

@@ -1,7 +1,7 @@
-#include <kernel/tty.h>
-#include <kernel/input_event_queue.h>
-#include <kernel/vga_io.h>
-#include <kernel/keymap.h>
+#include <kernel/drivers/tty.h>
+#include <kernel/core/input_event_queue.h>
+#include <kernel/drivers/vga_io.h>
+#include <kernel/core/keymap.h>
 #include <string.h>
 
 #define TTY_BUFFER_SIZE 256

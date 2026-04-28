@@ -1,5 +1,5 @@
 #include <stdint.h>
-#include <kernel/asmcall.h>
+#include <kernel/arch/i386/asmcall.h>
 
 struct gdt_entry
 {

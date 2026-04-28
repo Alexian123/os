@@ -1,7 +1,7 @@
-#include <kernel/isr.h>
-#include <kernel/pit_driver.h>
-#include <kernel/pic_driver.h>
-#include <kernel/asmcall.h>
+#include <kernel/arch/i386/isr.h>
+#include <kernel/drivers/pit_driver.h>
+#include <kernel/drivers/pic_driver.h>
+#include <kernel/arch/i386/asmcall.h>
 
 #define TIMER_IRQ 0
 

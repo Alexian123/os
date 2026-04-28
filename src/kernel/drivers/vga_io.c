@@ -1,4 +1,4 @@
-#include <kernel/port_io.h>
+#include <kernel/arch/i386/port_io.h>
 
 #include <stdbool.h>
 #include <stddef.h>

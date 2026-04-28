@@ -27,8 +27,10 @@ raw: kernel
 kernel: $(BUILD_DIR)/kernel.bin
 	@$(SCRIPTS_DIR)/check_multiboot.sh $<
 
-$(BUILD_DIR)/kernel.bin:
+$(BUILD_DIR)/kernel.bin: always
 	$(MAKE) -C $(KERNEL_SRC_DIR)
+
+always: clean
 
 clean:
 	$(MAKE) -C $(KERNEL_SRC_DIR) clean

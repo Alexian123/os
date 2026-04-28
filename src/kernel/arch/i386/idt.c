@@ -1,5 +1,5 @@
-#include <kernel/idt.h>
-#include <kernel/asmcall.h>
+#include <kernel/arch/i386/idt.h>
+#include <kernel/arch/i386/asmcall.h>
 
 #define IDT_ENTRIES 256
 

@@ -1,5 +1,5 @@
-#include <kernel/asmcall.h>
-#include <kernel/vga_io.h>
+#include <kernel/arch/i386/asmcall.h>
+#include <kernel/drivers/vga_io.h>
 #include <stdio.h>
 
 void panic(const char *msg) {

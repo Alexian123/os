@@ -1,9 +1,9 @@
-#include <kernel/keyboard_driver.h>
-#include <kernel/ps2_controller.h>
-#include <kernel/isr.h>
-#include <kernel/pic_driver.h>
-#include <kernel/input_event_queue.h>
-#include <kernel/keycodes.h>
+#include <kernel/drivers/keyboard_driver.h>
+#include <kernel/drivers/ps2_controller.h>
+#include <kernel/arch/i386/isr.h>
+#include <kernel/drivers/pic_driver.h>
+#include <kernel/core/input_event_queue.h>
+#include <kernel/core/keycodes.h>
 
 #define KBD_IRQ 1
 

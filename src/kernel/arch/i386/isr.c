@@ -1,6 +1,6 @@
-#include <kernel/isr.h>
-#include <kernel/asmcall.h>
-#include <kernel/pic_driver.h>
+#include <kernel/arch/i386/isr.h>
+#include <kernel/arch/i386/asmcall.h>
+#include <kernel/drivers/pic_driver.h>
 #include <stdio.h>
 #include <stddef.h>
 

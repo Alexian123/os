@@ -1,13 +1,13 @@
-#include <kernel/gdt.h>
-#include <kernel/vga_io.h>
-#include <kernel/asmcall.h>
-#include <kernel/idt.h>
-#include <kernel/pic_driver.h>
-#include <kernel/isr.h>
-#include <kernel/keyboard_driver.h>
-#include <kernel/input_event_queue.h>
-#include <kernel/tty.h>
-#include <kernel/system_timer.h>
+#include <kernel/arch/i386/gdt.h>
+#include <kernel/drivers/vga_io.h>
+#include <kernel/arch/i386/asmcall.h>
+#include <kernel/arch/i386/idt.h>
+#include <kernel/drivers/pic_driver.h>
+#include <kernel/arch/i386/isr.h>
+#include <kernel/drivers/keyboard_driver.h>
+#include <kernel/core/input_event_queue.h>
+#include <kernel/drivers/tty.h>
+#include <kernel/drivers/system_timer.h>
 #include <stdio.h>
 
 static const int system_timer_frequency = 1000; // Hz

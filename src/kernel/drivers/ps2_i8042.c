@@ -1,5 +1,5 @@
-#include <kernel/ps2_controller.h>
-#include <kernel/port_io.h>
+#include <kernel/drivers/ps2_controller.h>
+#include <kernel/arch/i386/port_io.h>
 
 #define PS2_DATA_PORT   0x60
 #define PS2_STATUS_PORT 0x64

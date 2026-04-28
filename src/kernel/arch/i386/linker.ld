@@ -4,6 +4,7 @@ SECTIONS
 {
     /* Start at physical 1MB */
     . = 0x00100000;
+    _kernel_start = .;
 
     /* Sections needed before paging is on (Physical) */
     .multiboot ALIGN(4K) : { *(.multiboot) }
